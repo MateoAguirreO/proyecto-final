@@ -99,4 +99,75 @@ public class GatewayProxyService {
             throw new RuntimeException("Error connecting to Clinica service: " + e.getMessage(), e);
         }
     }
+
+    /**
+     * Hace proxy de una petición POST al microservicio de Clínica
+     */
+    public String proxyToClinicaPost(String path, String body) {
+        String fullUrl = clinicaUrl + path;
+        log.info("Proxying POST request to Clinica: {} -> Full URL: {}", path, fullUrl);
+
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.set(HttpHeaders.CONTENT_TYPE, "application/json");
+            HttpEntity<String> entity = new HttpEntity<>(body, headers);
+
+            ResponseEntity<String> response = restTemplate.exchange(
+                    fullUrl,
+                    HttpMethod.POST,
+                    entity,
+                    String.class);
+            log.info("Successfully proxied POST to Clinica. Status: {}", response.getStatusCode());
+            return response.getBody();
+        } catch (Exception e) {
+            log.error("Error proxying POST to Clinica: {}", e.getMessage(), e);
+            throw new RuntimeException("Error connecting to Clinica service: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Hace proxy de una petición PATCH al microservicio de Clínica
+     */
+    public String proxyToClinicaPatch(String path, String body) {
+        String fullUrl = clinicaUrl + path;
+        log.info("Proxying PATCH request to Clinica: {} -> Full URL: {}", path, fullUrl);
+
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.set(HttpHeaders.CONTENT_TYPE, "application/json");
+            HttpEntity<String> entity = new HttpEntity<>(body, headers);
+
+            ResponseEntity<String> response = restTemplate.exchange(
+                    fullUrl,
+                    HttpMethod.PATCH,
+                    entity,
+                    String.class);
+            log.info("Successfully proxied PATCH to Clinica. Status: {}", response.getStatusCode());
+            return response.getBody();
+        } catch (Exception e) {
+            log.error("Error proxying PATCH to Clinica: {}", e.getMessage(), e);
+            throw new RuntimeException("Error connecting to Clinica service: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Hace proxy de una petición DELETE al microservicio de Clínica
+     */
+    public String proxyToClinicaDelete(String path) {
+        String fullUrl = clinicaUrl + path;
+        log.info("Proxying DELETE request to Clinica: {} -> Full URL: {}", path, fullUrl);
+
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(
+                    fullUrl,
+                    HttpMethod.DELETE,
+                    null,
+                    String.class);
+            log.info("Successfully proxied DELETE to Clinica. Status: {}", response.getStatusCode());
+            return response.getBody();
+        } catch (Exception e) {
+            log.error("Error proxying DELETE to Clinica: {}", e.getMessage(), e);
+            throw new RuntimeException("Error connecting to Clinica service: " + e.getMessage(), e);
+        }
+    }
 }
