@@ -1,98 +1,299 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🏥 NestJS - MongoDB Clínica
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+<div align="center">
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+![NestJS](https://img.shields.io/badge/NestJS-9.x-red?logo=nestjs)
+![MongoDB](https://img.shields.io/badge/MongoDB-6.0-green?logo=mongodb)
+![Node.js](https://img.shields.io/badge/Node.js-18.x-green?logo=node.js)
+![Docker](https://img.shields.io/badge/Docker-Enabled-blue?logo=docker)
+![License](https://img.shields.io/badge/License-MIT-yellow)
 
-## Description
+</div>
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 📋 Tabla de Contenidos
 
-## Project setup
+- [Descripción](#-descripción)
+- [Arquitectura](#-arquitectura)
+- [Tecnologías](#-tecnologías)
+- [Instalación](#-instalación)
+  - [Opción 1: Docker (Recomendado)](#opción-1-docker-recomendado)
+  - [Opción 2: Instalación Local](#opción-2-instalación-local)
+- [Modelos de Datos](#-modelos-de-datos)
+- [API Endpoints](#-api-endpoints)
+- [Documentación](#-documentación)
+- [Pruebas](#-pruebas)
+- [Despliegue](#-despliegue)
 
-```bash
-$ npm install
+---
+
+## 🎯 Descripción
+
+Microservicio desarrollado con NestJS y MongoDB para la gestión clínica (pacientes, tipos de tumor y registros clínicos). Está diseñado para integrarse con otros microservicios (p. ej. Genómica) y ser desplegado en contenedores.
+
+### Funcionalidades principales
+
+1. Gestión de pacientes (CRUD completo)
+2. Catálogo de tipos de tumor
+3. Registros clínicos/episodios asociados a pacientes
+4. Validación y DTOs con `class-validator` / `class-transformer`
+5. Documentación OpenAPI (Swagger)
+
+---
+
+## 🏗️ Arquitectura
+
+```
+Client (Angular/React)
+    │
+    ▼
+API Gateway / Auth (Spring Boot)
+    │
+    ▼
+Microservicio Clínica (NestJS) <--> Microservicio Genómica (Django / externo)
+    │
+    ▼
+MongoDB (Atlas / Self-hosted)
 ```
 
-## Compile and run the project
+**Características**
+
+- Desacoplamiento de responsabilidades
+- DTOs y validaciones en el borde (pipes)
+- Contenedorizado con Docker
+- Listo para Kubernetes
+
+---
+
+## 🚀 Tecnologías
+
+| Categoría | Tecnología | Versión |
+|---|---:|---:|
+| Framework | NestJS | 9.x |
+| Base de Datos | MongoDB | 6.x |
+| Lenguaje | TypeScript / Node.js | 18.x |
+| Documentación | @nestjs/swagger | latest |
+| Tests | Jest + Supertest | latest |
+
+---
+
+## 💻 Instalación
+
+### Opción 1: Docker (Recomendado)
+
+Requisitos: Docker Desktop y Docker Compose
 
 ```bash
-# development
-$ npm run start
+# Desde la raíz del proyecto
+docker-compose up -d --build
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+# Revisar contenedores
+docker ps
 ```
 
-## Run tests
+Si la imagen incluye scripts de inicialización para la BD, se ejecutarán automáticamente. Para reiniciar con BD limpia:
+
+```bash
+docker-compose down -v
+docker-compose up -d --build
+```
+
+### Opción 2: Instalación Local
+
+Requisitos: Node 18+, npm/yarn, MongoDB 6+
+
+```bash
+# 1. Instalar dependencias
+npm install
+
+# 2. Copiar variables de entorno
+cp .env.example .env
+# Editar `.env` con la conexión a MongoDB
+
+# 3. Ejecutar en modo desarrollo
+npm run start:dev
+```
+
+URLs por defecto (local):
+- API: http://localhost:3000/
+- Swagger: http://localhost:3000/api
+
+---
+
+## 📊 Modelos de Datos
+
+Los siguientes modelos reflejan las entidades principales en `src/*`.
+
+### Patient
+
+```ts
+interface Patient {
+  id: string; // UUID o ObjectId
+  firstName: string;
+  lastName: string;
+  birthDate?: string;
+  gender?: string;
+  identification?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+```
+
+### TumorType
+
+```ts
+interface TumorType {
+  id: string;
+  name: string; // ej: Adenocarcinoma
+  description?: string;
+}
+```
+
+### ClinicalRecord
+
+```ts
+interface ClinicalRecord {
+  id: string;
+  patientId: string; // referencia al paciente (ObjectId / UUID)
+  tumorTypeId?: string;
+  diagnosisDate?: string;
+  notes?: string;
+  createdAt?: string;
+}
+```
+
+---
+
+## 🔗 API Endpoints
+
+### Patients
+
+| Método | Endpoint | Descripción |
+|---|---|---|
+| GET | `/api/v1/patients` | Lista paginada de pacientes |
+| POST | `/api/v1/patients` | Crear paciente |
+| GET | `/api/v1/patients/:id` | Detalle paciente |
+| PUT | `/api/v1/patients/:id` | Reemplazar paciente |
+| PATCH | `/api/v1/patients/:id` | Actualizar parcialmente |
+| DELETE | `/api/v1/patients/:id` | Eliminar paciente |
+
+### TumorTypes
+
+| Método | Endpoint | Descripción |
+|---|---|---|
+| GET | `/api/v1/tumortypes` | Lista de tipos de tumor |
+| POST | `/api/v1/tumortypes` | Crear tipo |
+
+### ClinicalRecords
+
+| Método | Endpoint | Descripción |
+|---|---|---|
+| GET | `/api/v1/clinicalrecords` | Lista de registros clínicos |
+| POST | `/api/v1/clinicalrecords` | Crear nuevo registro |
+| GET | `/api/v1/clinicalrecords/:id` | Detalle registro |
+| GET | `/api/v1/clinicalrecords/by_patient?patientId={id}` | Registros por paciente |
+
+Ejemplo de creación de paciente:
+
+```bash
+curl -X POST http://localhost:3000/api/v1/patients \
+  -H "Content-Type: application/json" \
+  -d '{"firstName":"Juan","lastName":"Perez","birthDate":"1980-05-01"}'
+```
+
+---
+
+## 📚 Documentación
+
+La API expone documentación Swagger generada por `@nestjs/swagger`.
+
+- URL (local): `http://localhost:3000/api`
+
+---
+
+## 🧪 Pruebas
+
+El proyecto usa Jest y Supertest para pruebas unitarias y e2e.
 
 ```bash
 # unit tests
-$ npm run test
+npm run test
 
 # e2e tests
-$ npm run test:e2e
+npm run test:e2e
 
-# test coverage
-$ npm run test:cov
+# cobertura
+npm run test:cov
 ```
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## 🚢 Despliegue
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Recomendaciones:
+
+- Usar `NODE_ENV=production` y `npm run build` antes de iniciar
+- Conectar a un cluster administrado de MongoDB (Atlas) en producción
+- Configurar `ConfigMap` y `Secrets` en Kubernetes para variables sensibles
+
+Ejemplo (heroku / contenedor):
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+docker build -t clinic-service:latest .
+docker run -e MONGO_URI="mongodb://..." -p 3000:3000 clinic-service:latest
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+## 🔒 Variables de Entorno (ejemplo)
 
-Check out a few resources that may come in handy when working with NestJS:
+```env
+# App
+NODE_ENV=development
+PORT=3000
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+# Mongo
+MONGO_URI=mongodb://localhost:27017/clinic_db
 
-## Support
+# Seguridad
+JWT_SECRET=change_me_in_production
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+---
 
-## Stay in touch
+## 🔐 Seguridad y Buenas Prácticas
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- Validar y sanitizar entradas con `class-validator`.
+- Usar HTTPS en producción.
+- Guardar secretos en `Secrets` (K8s) o gestores externos.
+- Implementar rate-limiting y CORS restringido.
 
-## License
+---
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+## 🤝 Integración con Otros Microservicios
+
+El microservicio puede integrarse con el Microservicio de Genómica para asociar `patientId` con reportes genómicos. El intercambio se realiza por `patientId` (UUID/ObjectId) y endpoints REST internos.
+
+---
+
+## 📈 Próximos Pasos
+
+- Implementar autenticación JWT y roles/permissions
+- Añadir más pruebas unitarias e2e
+- CI/CD (GitHub Actions / GitLab CI)
+- Observabilidad: Prometheus / Grafana
+
+---
+
+## 👥 Equipo
+
+**Proyecto**: Clínica Microservicio
+
+---
+
+## 📄 Licencia
+
+Este proyecto usa la licencia MIT.
+
+---
+
+**Archivos clave:** `src/` (módulos), `docker-compose.yml`, `.env.example`, `package.json`
