@@ -1,0 +1,8 @@
+{
+    "/api": {
+        "target": "http://ab07b9a4029014e63935d4fddb195b8a-1722548835.us-east-1.elb.amazonaws.com:8080",
+        "secure": false,
+        "changeOrigin": true,
+        "logLevel": "info"
+    }
+}

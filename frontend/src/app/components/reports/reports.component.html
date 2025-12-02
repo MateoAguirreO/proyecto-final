@@ -1,0 +1,125 @@
+<div class="container">
+  <div class="flex-between mb-3">
+    <h1>Reportes Genéticos</h1>
+    <button class="btn btn-primary" (click)="toggleForm()">
+      {{ showForm ? 'Cancelar' : '+ Nuevo Reporte' }}
+    </button>
+  </div>
+
+  <div *ngIf="showForm" class="card mb-3">
+    <h2>Nuevo Reporte de Variante</h2>
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="patient_id">Paciente</label>
+        <select
+          id="patient_id"
+          [(ngModel)]="selectedPatientId"
+          name="patient_id"
+          required
+        >
+          <option value="">Seleccione un paciente...</option>
+          <option *ngFor="let patient of patients" [value]="patient._id">
+            {{ patient.name }} ({{ patient.gender }})
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="variant">Variante Genética</label>
+        <select
+          id="variant"
+          [(ngModel)]="reportForm.variant"
+          name="variant"
+          required
+        >
+          <option value="">Seleccione una variante...</option>
+          <option *ngFor="let variant of variants" [value]="variant.id">
+            {{ variant.gene_info?.symbol || 'N/A' }} - {{ variant.impact }} ({{ variant.chromosome }}:{{ variant.position }})
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="detection_date">Fecha de Detección</label>
+        <input
+          type="date"
+          id="detection_date"
+          [(ngModel)]="reportForm.detection_date"
+          name="detection_date"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="allele_frequency">Frecuencia Alélica (0-1)</label>
+        <input
+          type="number"
+          id="allele_frequency"
+          [(ngModel)]="reportForm.allele_frequency"
+          name="allele_frequency"
+          step="0.01"
+          min="0"
+          max="1"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="sample_type">Tipo de Muestra</label>
+        <input
+          type="text"
+          id="sample_type"
+          [(ngModel)]="reportForm.sample_type"
+          name="sample_type"
+          placeholder="ej: Sangre, Tejido, Saliva"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="notes">Notas</label>
+        <textarea
+          id="notes"
+          [(ngModel)]="reportForm.notes"
+          name="notes"
+        ></textarea>
+      </div>
+
+      <div class="flex gap-2">
+        <button type="submit" class="btn btn-primary">Crear Reporte</button>
+        <button type="button" class="btn btn-secondary" (click)="toggleForm()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="loading" class="loading">Cargando reportes...</div>
+
+  <div *ngIf="!loading && reports.length === 0" class="alert alert-info">
+    No hay reportes genéticos registrados.
+  </div>
+
+  <div *ngIf="!loading && reports.length > 0" class="card">
+    <h2>Reportes Registrados</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Paciente</th>
+          <th>Variante</th>
+          <th>Fecha Detección</th>
+          <th>Freq. Alélica</th>
+          <th>Tipo Muestra</th>
+          <th>Significancia Clínica</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let report of reports">
+          <td>{{ getPatientName(report.patient_id) }}</td>
+          <td>{{ report.variant_info?.gene_info?.symbol || report.variant }}</td>
+          <td>{{ report.detection_date }}</td>
+          <td>{{ report.allele_frequency }}</td>
+          <td>{{ report.sample_type || 'N/A' }}</td>
+          <td>{{ report.variant_info?.clinical_significance || 'N/A' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

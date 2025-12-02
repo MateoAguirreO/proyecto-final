@@ -1,0 +1,112 @@
+<div class="container">
+  <div class="flex-between mb-3">
+    <h1>Gestión de Pacientes</h1>
+    <button class="btn btn-primary" (click)="toggleForm()">
+      {{ showForm ? 'Cancelar' : '+ Nuevo Paciente' }}
+    </button>
+  </div>
+
+  <div *ngIf="showForm" class="card mb-3">
+    <h2>{{ editingId ? 'Editar Paciente' : 'Nuevo Paciente' }}</h2>
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="name">Nombre Completo</label>
+        <input
+          type="text"
+          id="name"
+          [(ngModel)]="patientForm.name"
+          name="name"
+          required
+        />
+      </div>
+
+      <div class="form-group" *ngIf="!editingId">
+        <label for="dateOfBirth">Fecha de Nacimiento</label>
+        <input
+          type="text"
+          id="dateOfBirth"
+          [(ngModel)]="patientForm.dateOfBirth"
+          name="dateOfBirth"
+          placeholder="DD MMM YYYY (ej: 15 Mar 1975)"
+          required
+        />
+        <small>Formato: DD MMM YYYY</small>
+      </div>
+
+      <div class="form-group">
+        <label for="gender">Género</label>
+        <select
+          id="gender"
+          [(ngModel)]="patientForm.gender"
+          name="gender"
+          required
+        >
+          <option value="">Seleccione...</option>
+          <option value="M">Masculino</option>
+          <option value="F">Femenino</option>
+          <option value="O">Otro</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="medicalHistory">Historia Médica</label>
+        <textarea
+          id="medicalHistory"
+          [(ngModel)]="patientForm.medicalHistory"
+          name="medicalHistory"
+          [disabled]="editingId !== null"
+        ></textarea>
+        <small *ngIf="editingId">Solo editable al crear</small>
+      </div>
+
+      <div class="form-group">
+        <label for="status">Estado</label>
+        <select
+          id="status"
+          [(ngModel)]="patientForm.status"
+          name="status"
+          required
+        >
+          <option value="Active">Activo</option>
+          <option value="Inactive">Inactivo</option>
+        </select>
+      </div>
+
+      <div class="flex gap-2">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <button type="button" class="btn btn-secondary" (click)="toggleForm()">Cancelar</button>
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="loading" class="loading">Cargando pacientes...</div>
+
+  <div *ngIf="!loading && patients.length === 0" class="alert alert-info">
+    No hay pacientes registrados.
+  </div>
+
+  <div *ngIf="!loading && patients.length > 0" class="card">
+    <h2>Pacientes Registrados</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Género</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let patient of patients">
+          <td>{{ patient.name }}</td>
+          <td>{{ patient.gender }}</td>
+          <td>{{ patient.status || 'N/A' }}</td>
+          <td class="actions">
+            <button class="btn btn-secondary" (click)="editPatient(patient)">Editar</button>
+            <button class="btn btn-danger" (click)="deletePatient(patient._id)">Eliminar</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

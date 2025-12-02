@@ -1,0 +1,31 @@
+<div class="container">
+  <h1 class="mb-3">Bienvenido, {{ username }}!</h1>
+
+  <div *ngIf="loading" class="loading">Cargando estadísticas...</div>
+
+  <div *ngIf="!loading" class="dashboard-grid">
+    <div class="stat-card">
+      <h3>{{ stats.patients }}</h3>
+      <p>Pacientes Registrados</p>
+    </div>
+
+    <div class="stat-card">
+      <h3>{{ stats.variants }}</h3>
+      <p>Variantes Genéticas</p>
+    </div>
+
+    <div class="stat-card">
+      <h3>{{ stats.reports }}</h3>
+      <p>Reportes Generados</p>
+    </div>
+  </div>
+
+  <div class="card mt-3">
+    <h2>Accesos Rápidos</h2>
+    <div class="flex gap-2 mt-2">
+      <a routerLink="/patients" class="btn btn-primary">Gestionar Pacientes</a>
+      <a routerLink="/variants" class="btn btn-primary">Ver Variantes</a>
+      <a routerLink="/reports" class="btn btn-primary">Reportes Genéticos</a>
+    </div>
+  </div>
+</div>

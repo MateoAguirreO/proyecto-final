@@ -1,0 +1,14 @@
+<div class="header" *ngIf="authService.isLoggedIn()">
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+      <h1>🧬 GenoSentinel</h1>
+      <nav>
+        <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+        <a routerLink="/patients" routerLinkActive="active">Pacientes</a>
+        <a routerLink="/variants" routerLinkActive="active">Variantes</a>
+        <a routerLink="/reports" routerLinkActive="active">Reportes</a>
+      </nav>
+    </div>
+    <button class="btn btn-secondary" (click)="logout()">Cerrar Sesión</button>
+  </div>
+</div>

@@ -1,0 +1,37 @@
+<div class="container">
+  <h1 class="mb-3">Variantes Genéticas</h1>
+
+  <div *ngIf="loading" class="loading">Cargando variantes...</div>
+
+  <div *ngIf="!loading && variants.length === 0" class="alert alert-info">
+    No hay variantes genéticas registradas.
+  </div>
+
+  <div *ngIf="!loading && variants.length > 0" class="card">
+    <h2>Variantes Registradas</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Gen</th>
+          <th>Tipo</th>
+          <th>Cromosoma</th>
+          <th>Posición</th>
+          <th>Alelo Ref.</th>
+          <th>Alelo Alt.</th>
+          <th>Significancia Clínica</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let variant of variants">
+          <td>{{ variant.gene_info?.symbol || 'N/A' }}</td>
+          <td>{{ variant.impact }}</td>
+          <td>{{ variant.chromosome }}</td>
+          <td>{{ variant.position }}</td>
+          <td>{{ variant.reference_base }}</td>
+          <td>{{ variant.alternate_base }}</td>
+          <td>{{ variant.clinical_significance || 'N/A' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
