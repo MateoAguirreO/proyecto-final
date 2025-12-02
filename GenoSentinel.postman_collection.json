@@ -1,0 +1,665 @@
+{
+    "info": {
+        "_postman_id": "genosentinel-api-collection",
+        "name": "GenoSentinel API",
+        "description": "Colección de Postman para probar todos los endpoints del sistema GenoSentinel (Gateway + Genomica + Clinica)",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Authentication",
+            "item": [
+                {
+                    "name": "Register User",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201 || pm.response.code === 200) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.environment.set(\"jwt_token\", jsonData.token);",
+                                    "    pm.environment.set(\"username\", jsonData.username);",
+                                    "    console.log(\"Token guardado: \" + jsonData.token.substring(0, 20) + \"...\");",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"username\": \"testuser\",\n    \"password\": \"Test1234\",\n    \"email\": \"test@genosentinel.com\",\n    \"fullName\": \"Test User\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/register",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "register"
+                            ]
+                        },
+                        "description": "Registra un nuevo usuario en el sistema y guarda el token JWT"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Login",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 200) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.environment.set(\"jwt_token\", jsonData.token);",
+                                    "    pm.environment.set(\"username\", jsonData.username);",
+                                    "    console.log(\"Token guardado: \" + jsonData.token.substring(0, 20) + \"...\");",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"username\": \"testuser\",\n    \"password\": \"Test1234\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/auth/login",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "auth",
+                                "login"
+                            ]
+                        },
+                        "description": "Inicia sesión con un usuario existente y guarda el token JWT"
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints de autenticación (registro y login)"
+        },
+        {
+            "name": "Genomica - Genes",
+            "item": [
+                {
+                    "name": "List All Genes",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/genomica/v1/genes/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "genomica",
+                                "v1",
+                                "genes",
+                                ""
+                            ]
+                        },
+                        "description": "Obtiene lista paginada de todos los genes de interés oncológico"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Gene by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/genomica/v1/genes/1/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "genomica",
+                                "v1",
+                                "genes",
+                                "1",
+                                ""
+                            ]
+                        },
+                        "description": "Obtiene detalles de un gen específico por ID"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Search Genes by Symbol",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/genomica/v1/genes/?search=BRCA",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "genomica",
+                                "v1",
+                                "genes",
+                                ""
+                            ],
+                            "query": [
+                                {
+                                    "key": "search",
+                                    "value": "BRCA"
+                                }
+                            ]
+                        },
+                        "description": "Busca genes por símbolo o nombre completo"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Gene",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"symbol\": \"EGFR\",\n    \"full_name\": \"Epidermal Growth Factor Receptor\",\n    \"function_summary\": \"Receptor de factor de crecimiento epidérmico, implicado en proliferación celular\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/genomica/v1/genes/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "genomica",
+                                "v1",
+                                "genes",
+                                ""
+                            ]
+                        },
+                        "description": "Crea un nuevo gen en el catálogo"
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints para gestión de genes de interés oncológico"
+        },
+        {
+            "name": "Genomica - Variants",
+            "item": [
+                {
+                    "name": "List All Variants",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/genomica/v1/variants/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "genomica",
+                                "v1",
+                                "variants",
+                                ""
+                            ]
+                        },
+                        "description": "Obtiene lista paginada de todas las variantes genéticas"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Variant by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/genomica/v1/variants/{{variant_id}}/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "genomica",
+                                "v1",
+                                "variants",
+                                "{{variant_id}}",
+                                ""
+                            ]
+                        },
+                        "description": "Obtiene detalles de una variante específica por UUID"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Filter Variants by Gene",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/genomica/v1/variants/?gene_symbol=TP53",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "genomica",
+                                "v1",
+                                "variants",
+                                ""
+                            ],
+                            "query": [
+                                {
+                                    "key": "gene_symbol",
+                                    "value": "TP53"
+                                }
+                            ]
+                        },
+                        "description": "Filtra variantes por símbolo de gen"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Variant",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"gene\": 1,\n    \"chromosome\": \"chr17\",\n    \"position\": 43045802,\n    \"reference_base\": \"C\",\n    \"alternate_base\": \"T\",\n    \"impact\": \"FRAMESHIFT\",\n    \"clinical_significance\": \"Patogénica\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/genomica/v1/variants/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "genomica",
+                                "v1",
+                                "variants",
+                                ""
+                            ]
+                        },
+                        "description": "Crea una nueva variante genética"
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints para gestión de variantes genéticas"
+        },
+        {
+            "name": "Genomica - Patient Reports",
+            "item": [
+                {
+                    "name": "List All Patient Reports",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/genomica/v1/patient-reports/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "genomica",
+                                "v1",
+                                "patient-reports",
+                                ""
+                            ]
+                        },
+                        "description": "Obtiene lista de todos los reportes de variantes de pacientes"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Patient Report by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/genomica/v1/patient-reports/{{report_id}}/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "genomica",
+                                "v1",
+                                "patient-reports",
+                                "{{report_id}}",
+                                ""
+                            ]
+                        },
+                        "description": "Obtiene detalles de un reporte específico por UUID"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Filter Reports by Patient",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/genomica/v1/patient-reports/?patient_id=550e8400-e29b-41d4-a716-446655440001",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "genomica",
+                                "v1",
+                                "patient-reports",
+                                ""
+                            ],
+                            "query": [
+                                {
+                                    "key": "patient_id",
+                                    "value": "550e8400-e29b-41d4-a716-446655440001"
+                                }
+                            ]
+                        },
+                        "description": "Filtra reportes por ID de paciente"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Patient Report",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"patient_id\": \"550e8400-e29b-41d4-a716-446655440002\",\n    \"variants\": [\n        \"07a589f4-4019-4632-ae3c-c9bbc0ae2c5d\"\n    ],\n    \"interpretation\": \"Variante patogénica detectada en BRCA1\",\n    \"recommendations\": \"Seguimiento oncológico cada 6 meses\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/genomica/v1/patient-reports/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "genomica",
+                                "v1",
+                                "patient-reports",
+                                ""
+                            ]
+                        },
+                        "description": "Crea un nuevo reporte de variantes para un paciente"
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints para gestión de reportes de pacientes"
+        },
+        {
+            "name": "Health & Monitoring",
+            "item": [
+                {
+                    "name": "Health Check",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/actuator/health",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "actuator",
+                                "health"
+                            ]
+                        },
+                        "description": "Verifica el estado de salud del Gateway y servicios conectados"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Gateway Info",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/actuator/info",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "actuator",
+                                "info"
+                            ]
+                        },
+                        "description": "Obtiene información del Gateway"
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints de monitoreo y salud del sistema"
+        },
+        {
+            "name": "Documentation",
+            "item": [
+                {
+                    "name": "Swagger UI - Genomica",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/genomica/docs/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "genomica",
+                                "docs",
+                                ""
+                            ]
+                        },
+                        "description": "Abre la interfaz Swagger UI para documentación interactiva de Genomica"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "OpenAPI Schema - Genomica",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/genomica/schema/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "genomica",
+                                "schema",
+                                ""
+                            ]
+                        },
+                        "description": "Obtiene el esquema OpenAPI 3.0 de la API de Genomica"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "ReDoc - Genomica",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/genomica/redoc/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "genomica",
+                                "redoc",
+                                ""
+                            ]
+                        },
+                        "description": "Abre la interfaz ReDoc para documentación de Genomica"
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints de documentación de las APIs"
+        }
+    ],
+    "event": [
+        {
+            "listen": "prerequest",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        },
+        {
+            "listen": "test",
+            "script": {
+                "type": "text/javascript",
+                "exec": [
+                    ""
+                ]
+            }
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://ab07b9a4029014e63935d4fddb195b8a-1722548835.us-east-1.elb.amazonaws.com:8080",
+            "type": "string"
+        },
+        {
+            "key": "jwt_token",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "username",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "variant_id",
+            "value": "07a589f4-4019-4632-ae3c-c9bbc0ae2c5d",
+            "type": "string"
+        },
+        {
+            "key": "report_id",
+            "value": "6a895d48-6817-429c-9c8a-07efe4e285db",
+            "type": "string"
+        }
+    ]
+}

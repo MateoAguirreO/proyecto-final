@@ -56,7 +56,13 @@ public class SecurityConfig {
                                 "/api/auth/**",
                                 "/api/health/**",
                                 "/api/status",
-                                "/actuator/**")
+                                "/actuator/**",
+                                "/api/genomica/docs/**",
+                                "/api/genomica/schema/**",
+                                "/api/genomica/redoc/**",
+                                "/api/clinica/docs/**",
+                                "/api/clinica/schema/**",
+                                "/api/clinica/redoc/**")
                         .permitAll()
                         // Todos los demás endpoints requieren autenticación
                         .anyRequest().authenticated())

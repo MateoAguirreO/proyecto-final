@@ -91,11 +91,11 @@ WSGI_APPLICATION = 'genomica_service.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DB_NAME', 'genomica_db'),
-        'USER': os.environ.get('DB_USER', 'root'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'password'),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
-        'PORT': os.environ.get('DB_PORT', '3306'),
+        'NAME': os.environ.get('DATABASE_NAME', os.environ.get('DB_NAME', 'genomica_db')),
+        'USER': os.environ.get('DATABASE_USER', os.environ.get('DB_USER', 'root')),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD', os.environ.get('DB_PASSWORD', 'password')),
+        'HOST': os.environ.get('DATABASE_HOST', os.environ.get('DB_HOST', 'localhost')),
+        'PORT': os.environ.get('DATABASE_PORT', os.environ.get('DB_PORT', '3306')),
         'OPTIONS': {
             'charset': 'utf8mb4',
         },

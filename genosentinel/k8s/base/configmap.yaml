@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gateway-config
+  namespace: genosentinel
+data:
+  SPRING_PROFILES_ACTIVE: "prod"
+  MICROSERVICES_GENOMICA_URL: "http://genomica-service:8000"
+  MICROSERVICES_CLINICA_URL: "http://clinica-service:3000"
+  SPRING_DATASOURCE_URL: "jdbc:mysql://gateway-mysql:3306/gateway_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: genomica-config
+  namespace: genosentinel
+data:
+  DEBUG: "False"
+  DJANGO_SETTINGS_MODULE: "genomica_service.settings"
+  DATABASE_HOST: "genomica-mysql"
+  DATABASE_PORT: "3306"
+  DATABASE_NAME: "genomica_db"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: clinica-config
+  namespace: genosentinel
+data:
+  PORT: "3000"
+  NODE_ENV: "production"

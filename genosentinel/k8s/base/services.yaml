@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-mysql
+  namespace: genosentinel
+  labels:
+    app: gateway-mysql
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3306
+      targetPort: 3306
+      protocol: TCP
+      name: mysql
+  selector:
+    app: gateway-mysql
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: genomica-mysql
+  namespace: genosentinel
+  labels:
+    app: genomica-mysql
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3306
+      targetPort: 3306
+      protocol: TCP
+      name: mysql
+  selector:
+    app: genomica-mysql
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: genomica-service
+  namespace: genosentinel
+  labels:
+    app: genomica-service
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP
+      name: http
+  selector:
+    app: genomica-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: clinica-service
+  namespace: genosentinel
+  labels:
+    app: clinica-service
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3000
+      targetPort: 3000
+      protocol: TCP
+      name: http
+  selector:
+    app: clinica-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway
+  namespace: genosentinel
+  labels:
+    app: gateway
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
+      name: http
+  selector:
+    app: gateway

@@ -21,6 +21,7 @@ Parte del sistema GenoSentinel de Breaze Labs
 - [Descripción](#-descripción)
 - [Arquitectura Docker](#-arquitectura-docker)
 - [Inicio Rápido](#-inicio-rápido)
+- [Despliegue en Kubernetes](#-despliegue-en-kubernetes)
 - [Funcionalidades](#-funcionalidades)
 - [Pruebas de Integración](#-pruebas-de-integración)
 - [API Endpoints](#-api-endpoints)
@@ -129,6 +130,94 @@ Invoke-RestMethod -Uri "http://localhost:8080/api/genomica/genes/" -Headers $hea
 
 ---
 
+## ☸️ Despliegue en Kubernetes
+
+GenoSentinel está listo para desplegarse en Kubernetes con manifiestos completos y scripts automatizados.
+
+### 📁 Estructura K8s
+
+```
+k8s/
+├── base/
+│   ├── namespace.yaml              # Namespace genosentinel
+│   ├── configmap.yaml              # Configuraciones
+│   ├── secrets.yaml                # Credenciales y JWT
+│   ├── pvc.yaml                    # Almacenamiento persistente
+│   ├── mysql-deployments.yaml      # Bases de datos
+│   ├── genomica-deployment.yaml    # Servicio Genomica
+│   ├── clinica-deployment.yaml     # Servicio Clinica
+│   ├── gateway-deployment.yaml     # Gateway
+│   └── services.yaml               # Exposición de servicios
+├── deploy.ps1                      # Script de despliegue (Windows)
+├── deploy.sh                       # Script de despliegue (Linux/Mac)
+└── README.md                       # Documentación completa
+```
+
+### 🚀 Despliegue Rápido
+
+**Windows PowerShell:**
+
+```powershell
+.\k8s\deploy.ps1
+```
+
+**Linux/Mac:**
+
+```bash
+chmod +x k8s/deploy.sh
+./k8s/deploy.sh
+```
+
+### 🔍 Verificar Despliegue
+
+```bash
+# Ver pods
+kubectl get pods -n genosentinel
+
+# Ver servicios
+kubectl get svc -n genosentinel
+
+# Ver logs del Gateway
+kubectl logs -n genosentinel -l app=gateway -f
+```
+
+### 🌐 Acceder al Gateway
+
+```bash
+# Para minikube
+minikube service gateway -n genosentinel --url
+
+# Para Docker Desktop
+http://localhost:8080
+
+# Para cloud providers
+kubectl get svc gateway -n genosentinel
+```
+
+### 📊 Características del Despliegue K8s
+
+- ✅ **Alta Disponibilidad**: 2 réplicas de cada servicio de aplicación
+- ✅ **Health Checks**: Liveness y Readiness probes configurados
+- ✅ **Almacenamiento Persistente**: PVCs para bases de datos MySQL
+- ✅ **Secrets Management**: Credenciales en Kubernetes Secrets
+- ✅ **Resource Limits**: CPU y memoria controlados
+- ✅ **Init Containers**: Espera a que dependencias estén listas
+- ✅ **LoadBalancer**: Gateway expuesto externamente
+
+### 📚 Documentación Completa
+
+Para instrucciones detalladas de Kubernetes, consulta: [`k8s/README.md`](k8s/README.md)
+
+Incluye:
+
+- Pre-requisitos y configuración
+- Manejo de imágenes Docker
+- Troubleshooting completo
+- Escalado y monitoreo
+- Consideraciones de producción
+
+---
+
 ## ✨ Funcionalidades
 
 ### 🔑 Autenticación JWT
@@ -180,7 +269,7 @@ GET /api/genomica/patient-reports/    # Reportes de pacientes
 **Gateway → Clinica:**
 
 ```bash
-GET /api/clinica/**                   # Proxy a NestJS (host.docker.internal:3000)
+GET /api/clinica/**                   # Proxy a NestJS (clinica-service:3000)
 ```
 
 **Características del Proxy:**

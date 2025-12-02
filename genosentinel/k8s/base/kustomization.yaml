@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: genosentinel
+
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  - secrets.yaml
+  - pvc.yaml
+  - mysql-deployments.yaml
+  - genomica-deployment.yaml
+  - clinica-deployment.yaml
+  - gateway-deployment.yaml
+  - services.yaml
+
+# Etiquetas comunes para todos los recursos
+commonLabels:
+  app.kubernetes.io/name: genosentinel
+  app.kubernetes.io/version: "1.0"
+  app.kubernetes.io/managed-by: kustomize
+
+# Anotaciones comunes
+commonAnnotations:
+  description: "GenoSentinel - Sistema de análisis genómico y clínico"

@@ -1,0 +1,155 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway-mysql
+  namespace: genosentinel
+  labels:
+    app: gateway-mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway-mysql
+  template:
+    metadata:
+      labels:
+        app: gateway-mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0
+          ports:
+            - containerPort: 3306
+              name: mysql
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-gateway-secrets
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-gateway-secrets
+                  key: MYSQL_DATABASE
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-gateway-secrets
+                  key: MYSQL_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-gateway-secrets
+                  key: MYSQL_PASSWORD
+          volumeMounts:
+            - name: mysql-storage
+              mountPath: /var/lib/mysql
+          livenessProbe:
+            exec:
+              command:
+                - mysqladmin
+                - ping
+                - -h
+                - localhost
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            exec:
+              command:
+                - mysqladmin
+                - ping
+                - -h
+                - localhost
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 2
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+      volumes:
+        - name: mysql-storage
+          emptyDir: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: genomica-mysql
+  namespace: genosentinel
+  labels:
+    app: genomica-mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: genomica-mysql
+  template:
+    metadata:
+      labels:
+        app: genomica-mysql
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:8.0
+          ports:
+            - containerPort: 3306
+              name: mysql
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-genomica-secrets
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-genomica-secrets
+                  key: MYSQL_DATABASE
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-genomica-secrets
+                  key: MYSQL_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-genomica-secrets
+                  key: MYSQL_PASSWORD
+          volumeMounts:
+            - name: mysql-storage
+              mountPath: /var/lib/mysql
+          livenessProbe:
+            exec:
+              command:
+                - mysqladmin
+                - ping
+                - -h
+                - localhost
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            exec:
+              command:
+                - mysqladmin
+                - ping
+                - -h
+                - localhost
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 2
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+      volumes:
+        - name: mysql-storage
+          emptyDir: {}
