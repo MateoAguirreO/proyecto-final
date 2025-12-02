@@ -26,17 +26,121 @@
 
       <div class="form-group">
         <label for="variant">Variante Genética</label>
-        <select
-          id="variant"
-          [(ngModel)]="reportForm.variant"
-          name="variant"
-          required
-        >
-          <option value="">Seleccione una variante...</option>
-          <option *ngFor="let variant of variants" [value]="variant.id">
-            {{ variant.gene_info?.symbol || 'N/A' }} - {{ variant.impact }} ({{ variant.chromosome }}:{{ variant.position }})
-          </option>
-        </select>
+        <div class="flex gap-2">
+          <select
+            id="variant"
+            [(ngModel)]="reportForm.variant"
+            name="variant"
+            required
+            style="flex: 1"
+          >
+            <option value="">Seleccione una variante...</option>
+            <option *ngFor="let variant of variants" [value]="variant.id">
+              {{ variant.gene_info?.symbol || 'N/A' }} - {{ variant.impact }} ({{ variant.chromosome }}:{{ variant.position }})
+            </option>
+          </select>
+          <button type="button" class="btn btn-secondary" (click)="toggleVariantForm()">
+            {{ showVariantForm ? 'Cancelar' : '+ Nueva' }}
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="showVariantForm" class="card mb-3" style="background-color: #f8f9fa; padding: 1rem; margin-top: 0.5rem;">
+        <h3 style="font-size: 1.1rem; margin-bottom: 1rem;">Nueva Variante Genética</h3>
+        
+        <div class="form-group">
+          <label for="gene_id">Gen</label>
+          <select
+            id="gene_id"
+            [(ngModel)]="variantForm.gene"
+            name="gene_id"
+            required
+          >
+            <option value="">Seleccione un gen...</option>
+            <option *ngFor="let gene of genes" [value]="gene.id">
+              {{ gene.symbol }} - {{ gene.full_name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="chromosome">Cromosoma</label>
+          <input
+            type="text"
+            id="chromosome"
+            [(ngModel)]="variantForm.chromosome"
+            name="chromosome"
+            placeholder="ej: chr1, chrX"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="position">Posición</label>
+          <input
+            type="number"
+            id="position"
+            [(ngModel)]="variantForm.position"
+            name="position"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="reference_base">Alelo de Referencia</label>
+          <input
+            type="text"
+            id="reference_base"
+            [(ngModel)]="variantForm.reference_base"
+            name="reference_base"
+            placeholder="ej: A, T, G, C"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="alternate_base">Alelo Alternativo</label>
+          <input
+            type="text"
+            id="alternate_base"
+            [(ngModel)]="variantForm.alternate_base"
+            name="alternate_base"
+            placeholder="ej: A, T, G, C"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="impact">Impacto</label>
+          <select
+            id="impact"
+            [(ngModel)]="variantForm.impact"
+            name="impact"
+            required
+          >
+            <option value="">Seleccione el impacto...</option>
+            <option value="HIGH">Alto</option>
+            <option value="MODERATE">Moderado</option>
+            <option value="LOW">Bajo</option>
+            <option value="MODIFIER">Modificador</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="clinical_significance">Significancia Clínica</label>
+          <input
+            type="text"
+            id="clinical_significance"
+            [(ngModel)]="variantForm.clinical_significance"
+            name="clinical_significance"
+            placeholder="ej: Patogénica, Benigna"
+          />
+        </div>
+
+        <div class="flex gap-2">
+          <button type="button" class="btn btn-primary" (click)="createVariant()">Crear Variante</button>
+          <button type="button" class="btn btn-secondary" (click)="toggleVariantForm()">Cancelar</button>
+        </div>
       </div>
 
       <div class="form-group">

@@ -51,6 +51,10 @@ export class GenomicaService {
     return this.http.get<GeneticVariant>(`${this.baseUrl}/variants/${id}/`);
   }
 
+  createVariant(variant: any): Observable<GeneticVariant> {
+    return this.http.post<GeneticVariant>(`${this.baseUrl}/variants/`, variant);
+  }
+
   // Patient Variant Reports
   getPatientReports(): Observable<PatientVariantReport[]> {
     return this.http.get<any>(`${this.baseUrl}/patient-reports/`).pipe(

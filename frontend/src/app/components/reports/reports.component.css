@@ -4,3 +4,11 @@ small {
   font-size: 0.85rem;
   margin-top: 0.25rem;
 }
+
+.flex {
+  display: flex;
+}
+
+.gap-2 {
+  gap: 0.5rem;
+}

@@ -4,6 +4,7 @@ import { ClinicaService } from "../../services/clinica.service";
 import {
   PatientVariantReport,
   GeneticVariant,
+  Gene,
 } from "../../models/genomica.model";
 import { Patient } from "../../models/clinica.model";
 
@@ -16,8 +17,10 @@ export class ReportsComponent implements OnInit {
   reports: PatientVariantReport[] = [];
   patients: Patient[] = [];
   variants: GeneticVariant[] = [];
+  genes: Gene[] = [];
   loading = false;
   showForm = false;
+  showVariantForm = false;
   selectedPatientId = "";
 
   reportForm: Partial<PatientVariantReport> = {
@@ -26,6 +29,16 @@ export class ReportsComponent implements OnInit {
     allele_frequency: 0,
     sample_type: "",
     notes: "",
+  };
+
+  variantForm: any = {
+    gene: "",
+    chromosome: "",
+    position: null,
+    reference_base: "",
+    alternate_base: "",
+    impact: "",
+    clinical_significance: "",
   };
 
   constructor(
@@ -37,6 +50,7 @@ export class ReportsComponent implements OnInit {
     this.loadReports();
     this.loadPatients();
     this.loadVariants();
+    this.loadGenes();
   }
 
   loadReports(): void {
@@ -68,11 +82,39 @@ export class ReportsComponent implements OnInit {
     });
   }
 
+  loadGenes(): void {
+    this.genomicaService.getGenes().subscribe({
+      next: (data) => {
+        this.genes = data;
+      },
+    });
+  }
+
   toggleForm(): void {
     this.showForm = !this.showForm;
     if (!this.showForm) {
       this.resetForm();
+      this.showVariantForm = false;
     }
+  }
+
+  toggleVariantForm(): void {
+    this.showVariantForm = !this.showVariantForm;
+    if (!this.showVariantForm) {
+      this.resetVariantForm();
+    }
+  }
+
+  resetVariantForm(): void {
+    this.variantForm = {
+      gene: "",
+      chromosome: "",
+      position: null,
+      reference_base: "",
+      alternate_base: "",
+      impact: "",
+      clinical_significance: "",
+    };
   }
 
   resetForm(): void {
@@ -99,6 +141,23 @@ export class ReportsComponent implements OnInit {
       error: (error) => {
         alert(
           "Error al crear reporte: " +
+            (error.error?.message || "Error desconocido")
+        );
+      },
+    });
+  }
+
+  createVariant(): void {
+    this.genomicaService.createVariant(this.variantForm).subscribe({
+      next: (newVariant) => {
+        this.loadVariants();
+        this.reportForm.variant = newVariant.id;
+        this.toggleVariantForm();
+        alert("Variante creada exitosamente");
+      },
+      error: (error) => {
+        alert(
+          "Error al crear variante: " +
             (error.error?.message || "Error desconocido")
         );
       },
