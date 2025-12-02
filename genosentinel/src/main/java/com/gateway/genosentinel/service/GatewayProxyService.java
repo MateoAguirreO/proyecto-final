@@ -135,6 +135,40 @@ public class GatewayProxyService {
     }
 
     /**
+     * Hace proxy de una petición GET al microservicio de Clinica retornando
+     * ResponseEntity completo con headers preservados
+     */
+    public ResponseEntity<String> proxyToClinicaWithHeaders(String path) {
+        String fullUrl = clinicaUrl + path;
+        log.info("Proxying GET request to Clinica: {} -> Full URL: {}", path, fullUrl);
+
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(
+                    fullUrl,
+                    HttpMethod.GET,
+                    null,
+                    String.class);
+
+            log.info("Successfully proxied to Clinica. Status: {}, Content-Type: {}",
+                    response.getStatusCode(),
+                    response.getHeaders().getContentType());
+
+            // Copiar explícitamente todos los headers de la respuesta
+            HttpHeaders headers = new HttpHeaders();
+            headers.putAll(response.getHeaders());
+
+            // Crear nueva ResponseEntity con los headers copiados
+            return ResponseEntity
+                    .status(response.getStatusCode())
+                    .headers(headers)
+                    .body(response.getBody());
+        } catch (Exception e) {
+            log.error("Error proxying to Clinica: {}", e.getMessage(), e);
+            throw new RuntimeException("Error connecting to Clinica service: " + e.getMessage(), e);
+        }
+    }
+
+    /**
      * Hace proxy de una petición POST al microservicio de Clínica
      */
     public String proxyToClinicaPost(String path, String body) {

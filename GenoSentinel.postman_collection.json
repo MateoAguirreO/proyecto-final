@@ -464,6 +464,21 @@
                 },
                 {
                     "name": "Create Patient Report",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201) {",
+                                    "    var jsonData = pm.response.json();",
+                                    "    pm.environment.set(\"report_id\", jsonData.id);",
+                                    "    console.log(\"Report ID guardado: \" + jsonData.id);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
                     "request": {
                         "method": "POST",
                         "header": [
@@ -479,7 +494,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n    \"patient_id\": \"550e8400-e29b-41d4-a716-446655440002\",\n    \"variants\": [\n        \"07a589f4-4019-4632-ae3c-c9bbc0ae2c5d\"\n    ],\n    \"interpretation\": \"Variante patogénica detectada en BRCA1\",\n    \"recommendations\": \"Seguimiento oncológico cada 6 meses\"\n}"
+                            "raw": "{\n    \"patient_id\": \"550e8400-e29b-41d4-a716-446655440002\",\n    \"variant\": \"{{variant_id}}\",\n    \"detection_date\": \"2024-11-15\",\n    \"allele_frequency\": 0.4523,\n    \"sample_type\": \"Biopsia tumoral\",\n    \"notes\": \"Variante patogénica detectada en BRCA1. Recomendación: Seguimiento oncológico cada 6 meses\"\n}"
                         },
                         "url": {
                             "raw": "{{base_url}}/api/genomica/v1/patient-reports/",
@@ -494,12 +509,364 @@
                                 ""
                             ]
                         },
-                        "description": "Crea un nuevo reporte de variantes para un paciente"
+                        "description": "Crea un nuevo reporte de variantes para un paciente. Campos requeridos: patient_id (UUID), variant (UUID de variante existente), detection_date (YYYY-MM-DD), allele_frequency (0.0-1.0)"
                     },
                     "response": []
                 }
             ],
             "description": "Endpoints para gestión de reportes de pacientes"
+        },
+        {
+            "name": "Clinica - Patients",
+            "item": [
+                {
+                    "name": "List All Patients",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/clinica/patients/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "clinica",
+                                "patients",
+                                ""
+                            ]
+                        },
+                        "description": "Obtiene lista de todos los pacientes registrados en el sistema clínico"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Patient by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/clinica/patients/{{patient_id}}/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "clinica",
+                                "patients",
+                                "{{patient_id}}",
+                                ""
+                            ]
+                        },
+                        "description": "Obtiene detalles de un paciente específico"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Patient",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"firstName\": \"María\",\n    \"lastName\": \"González\",\n    \"dateOfBirth\": \"15 Mar 1975\",\n    \"gender\": \"F\",\n    \"status\": \"Active\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/clinica/patients/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "clinica",
+                                "patients",
+                                ""
+                            ]
+                        },
+                        "description": "Crea un nuevo paciente en el sistema clínico"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update Patient",
+                    "request": {
+                        "method": "PATCH",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"status\": \"Inactive\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/clinica/patients/{{patient_id}}/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "clinica",
+                                "patients",
+                                "{{patient_id}}",
+                                ""
+                            ]
+                        },
+                        "description": "Actualiza la información de un paciente"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Patient",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/clinica/patients/{{patient_id}}/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "clinica",
+                                "patients",
+                                "{{patient_id}}",
+                                ""
+                            ]
+                        },
+                        "description": "Elimina un paciente del sistema"
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints para gestión de pacientes del sistema clínico"
+        },
+        {
+            "name": "Clinica - Clinical Records",
+            "item": [
+                {
+                    "name": "List All Clinical Records",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/clinica/clinicalrecords/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "clinica",
+                                "clinicalrecords",
+                                ""
+                            ]
+                        },
+                        "description": "Obtiene lista de todos los registros clínicos"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Clinical Record by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/clinica/clinicalrecords/{{record_id}}/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "clinica",
+                                "clinicalrecords",
+                                "{{record_id}}",
+                                ""
+                            ]
+                        },
+                        "description": "Obtiene detalles de un registro clínico específico"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Clinical Record",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"patientid\": \"550e8400-e29b-41d4-a716-446655440001\",\n    \"tumortypeid\": \"Melanoma\",\n    \"diagnosisdate\": \"15 Nov 2024\",\n    \"treatmentprotocol\": \"Immunotherapy\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/clinica/clinicalrecords/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "clinica",
+                                "clinicalrecords",
+                                ""
+                            ]
+                        },
+                        "description": "Crea un nuevo registro clínico"
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints para gestión de registros clínicos"
+        },
+        {
+            "name": "Clinica - Tumor Types",
+            "item": [
+                {
+                    "name": "List All Tumor Types",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/clinica/tumortypes/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "clinica",
+                                "tumortypes",
+                                ""
+                            ]
+                        },
+                        "description": "Obtiene lista de todos los tipos de tumor catalogados"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Tumor Type by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/clinica/tumortypes/{{tumor_type_id}}/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "clinica",
+                                "tumortypes",
+                                "{{tumor_type_id}}",
+                                ""
+                            ]
+                        },
+                        "description": "Obtiene detalles de un tipo de tumor específico"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Create Tumor Type",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{jwt_token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"tumorName\": \"Adenocarcinoma\",\n    \"systemAffected\": \"Gastrointestinal\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/clinica/tumortypes/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "clinica",
+                                "tumortypes",
+                                ""
+                            ]
+                        },
+                        "description": "Crea un nuevo tipo de tumor en el catálogo"
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints para gestión de tipos de tumor"
         },
         {
             "name": "Health & Monitoring",
@@ -610,6 +977,27 @@
                         "description": "Abre la interfaz ReDoc para documentación de Genomica"
                     },
                     "response": []
+                },
+                {
+                    "name": "Swagger UI - Clinica",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/api/clinica/docs/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "api",
+                                "clinica",
+                                "docs",
+                                ""
+                            ]
+                        },
+                        "description": "Abre la interfaz Swagger UI para documentación interactiva de Clinica"
+                    },
+                    "response": []
                 }
             ],
             "description": "Endpoints de documentación de las APIs"
@@ -659,6 +1047,21 @@
         {
             "key": "report_id",
             "value": "6a895d48-6817-429c-9c8a-07efe4e285db",
+            "type": "string"
+        },
+        {
+            "key": "patient_id",
+            "value": "6927efac656b5976c660bf98",
+            "type": "string"
+        },
+        {
+            "key": "record_id",
+            "value": "69290b476812491105e2e00b",
+            "type": "string"
+        },
+        {
+            "key": "tumor_type_id",
+            "value": "692924649f0ff42068d8ead5",
             "type": "string"
         }
     ]
